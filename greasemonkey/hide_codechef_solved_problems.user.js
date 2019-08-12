@@ -7,18 +7,12 @@
 // ==/UserScript==
 
 $(function() {
-  $('table.dataTable').prepend(
-    '<caption style="background-color: yellow"><h3>Filtered Results</h3></caption>'
-  );
+  let $allProblems = $('a').filter(function() {
+    return /^\/problems\/[A-Z]/.test($(this).attr('href'));
+  });
 
-  let $solvedProblems = $('a').filter(function() {
-    return (
-      $(this).attr('href') &&
-      $(this)
-        .attr('href')
-        .startsWith('/problems/') &&
-      $(this).css('color') === 'rgb(0, 128, 0)'
-    );
+  let $solvedProblems = $allProblems.filter(function() {
+    return $(this).css('color') === 'rgb(0, 128, 0)';
   });
 
   $solvedProblems.each(function() {
@@ -26,4 +20,10 @@ $(function() {
       .closest('tr')
       .hide();
   });
+
+  $('table.dataTable').prepend(
+    `<caption style="background-color: yellow"><h3>Filtered Results (Solved: ${
+      $solvedProblems.length
+    } / ${$allProblems.length})</h3></caption>`
+  );
 });
